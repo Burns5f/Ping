@@ -24,7 +24,7 @@ void netDaemon(int dev, struct netif *nif)
 	int dhcpd = 0;
 	int len   = 0;
 	int bufpoolID = 0;
-
+ 
 	control(dev, ETH_CTRL_GET_MAC, (ulong)nif->mac, 0);
 
 	dhcpd = create((void *)dhcpclient, INITSTK, INITPRIO*2, "DHCPC", 2,

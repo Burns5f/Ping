@@ -4,7 +4,7 @@
 #include <network.h>
 
 	/**
- * Generate a sequence of ARP requests.
+ * Generate a Echo request.
  *
  * @param *ipaddr pointer to the IP address
  */
@@ -28,23 +28,30 @@ int echoRequest(int dev, uchar *ipaddr)
 	dgram->id  = htons(currpid);
 	dgram->flags_froff = 0;
 	dgram->ttl = 63;
-	dgram->proto = IPv4_PROTO_UDP;
-	dgram->chksum = checksum((uchar *)dgram, 
-							 (4 * (dgram->ver_ihl & IPv4_IHL)));
-	for (i = 0; i < IPv4_ADDR_LEN; i++) dgram->src[i] = 0x00;
-	for (i = 0; i < IPv4_ADDR_LEN; i++) dgram->dst[i] = 0xFF;
-
+	dgram->proto = IPv4_PROTO_ICMP;
+	dgram->chksum = 0;
+	getip(dev, dgram->src);
+	dgram->dst = ipaddr;
+	//getip and then the ip address passed in. 
 	icmp->type = ECHO;
 	icmp->code  = 0;
-	icmp->checksum  = checksum((uchar*)icmp,sizeof(struct icmpgram));
+	icmp->checksum  = 0;
 	icmp->identifier  = 0; //need fixing 
 	icmp->seqnum = 0; //need fixing
-	//icmp->data = 0;
+	//icmp->data = 0; array size 18 to fill rest of space in buffer
 	//getmac(dev, arp->sha);
 	//getip(dev, arp->spa);
     //bzero(arp->tha, ETH_ADDR_LEN);
     //memcpy(arp->tpa, ipaddr, IP_ADDR_LEN);
 
+	//fill in data portion with data
+	for (i = 0; i++; i < ICMP_PAYLOAD_LENGTH)
+	{}
+	dgram->chksum = checksum((uchar *)dgram, 
+							 (4 * (dgram->ver_ihl & IPv4_IHL)));
+	icmp->checksum  = checksum((uchar*)icmp,sizeof(struct icmpgram) + ICMP_PAYLOAD_LENGTH); //8 size of struct + 18 payload size to fill out buffer
+
+	
 	write(dev, (uchar *)buffer, 
 		  sizeof(struct ethergram) + sizeof(struct ipgram) + sizeof(struct icmpgram));
 

@@ -22,7 +22,7 @@ void dhcpclient(int dev, struct netif *nif)
 	nif->state = NETIF_STATE_BINDING;
 	while (1)
 	{
-		switch (state)
+		switch (state) 
 		{
 		case DHCP_INIT:
 			// send DHCPDISCOVER

@@ -1,9 +1,9 @@
 
 #include <xinu.h>
 #include <icmp.h>
-
+ 
 /**
- * Swap and complete an arp request.
+ * Swap and return icmp echo.
  *
  * @param *buf pointer to the ether pkt
  */
