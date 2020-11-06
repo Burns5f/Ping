@@ -1,9 +1,14 @@
+/**
+ * @file echoRequest.c
+ * @provides echoRequest
+ */
+/* Embedded Xinu, Copyright (C) 2008.  All rights reserved. */
 #include <xinu.h>
-#include <icmp.h>
+#include "icmp.h"
 #include <stdlib.h>
-#include <network.h>
-
-	/**
+//#include <network.h>
+#include "../arp/arp.h"
+	/** 
  * Generate a Echo request.
  *
  * @param *ipaddr pointer to the IP address
@@ -17,8 +22,7 @@ int echoRequest(int dev, uchar *ipaddr)
 	int i;
 
 	// Construct an echo request.
-	for (i = 0; i < ETH_ADDR_LEN; i++)
-	{ ether->dst[i] = 0xFF; }
+	arpresolve(ipaddr,ether->dst); //Obtain Mac address using arpresolve
 	getmac(dev, ether->src);
 	ether->type = htons(ETYPE_IPv4);
 
@@ -30,6 +34,7 @@ int echoRequest(int dev, uchar *ipaddr)
 	dgram->ttl = 63;
 	dgram->proto = IPv4_PROTO_ICMP;
 	dgram->chksum = 0;
+
 	getip(dev, dgram->src);
 	dgram->dst = ipaddr;
 	//getip and then the ip address passed in. 
@@ -37,7 +42,7 @@ int echoRequest(int dev, uchar *ipaddr)
 	icmp->code  = 0;
 	icmp->checksum  = 0;
 	icmp->identifier  = 0; //need fixing 
-	icmp->seqnum = 0; //need fixing
+	icmp->seqnum = 0; //need fixing 
 	//icmp->data = 0; array size 18 to fill rest of space in buffer
 	//getmac(dev, arp->sha);
 	//getip(dev, arp->spa);
@@ -46,10 +51,12 @@ int echoRequest(int dev, uchar *ipaddr)
 
 	//fill in data portion with data
 	for (i = 0; i++; i < ICMP_PAYLOAD_LENGTH)
-	{}
+	{
+		icmp->data[i] = '0';
+	}
 	dgram->chksum = checksum((uchar *)dgram, 
 							 (4 * (dgram->ver_ihl & IPv4_IHL)));
-	icmp->checksum  = checksum((uchar*)icmp,sizeof(struct icmpgram) + ICMP_PAYLOAD_LENGTH); //8 size of struct + 18 payload size to fill out buffer
+	icmp->checksum  = checksum((uchar*)icmp, sizeof(struct icmpgram) + ICMP_PAYLOAD_LENGTH); //8 size of struct + 18 payload size to fill out buffer
 
 	
 	write(dev, (uchar *)buffer, 
@@ -78,5 +85,13 @@ int echoRequest(int dev, uchar *ipaddr)
     return OK;
 }
 
-		
+int echoResolve(uchar *ipaddr)
+{
+		ready(create
+          ((void *)echoRequest, INITSTK, 
+		   proctab[currpid].priority + 1, 
+		   "ECHO requester", 2,
+           ETH0, ipaddr), RESCHED_NO);
+	return OK;
+}
 

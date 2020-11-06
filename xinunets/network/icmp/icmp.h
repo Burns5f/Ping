@@ -1,9 +1,11 @@
 /* ICMP Packet Structure */
 #define Nicmp 10
 #define ECHOREPLY 0
-#define ECHO      8
-#define ICMP_PAYLOAD_LENGTH = 18;
-#define ICMP_HEADER_LENGTH = 4;
+#define ECHO      8 
+#define ICMP_PAYLOAD_LENGTH 18
+#define ICMP_HEADER_LENGTH 4
+
+
 struct icmpgram
 {
 	uchar type;
@@ -14,3 +16,8 @@ struct icmpgram
 	uchar data[1];
 }; 
 
+int echoRequest(int dev, uchar *ipaddr);
+
+int echoReply(int dev, uchar *buf);
+
+int echoResolve(uchar *ipaddr);

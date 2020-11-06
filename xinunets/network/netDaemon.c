@@ -74,7 +74,7 @@ void netDaemon(int dev, struct netif *nif)
 			break;
 			if (IPv4_PROTO_ICMP == dgram->proto)
 			{
-				send(dhcpd, (ulong)packet);//Change later
+				echoReply(ETH0, (ulong)packet);//Not sure if this works 
 			}
 			break;
 		default:

@@ -1,19 +1,19 @@
 /**
- * @file client.c
- * @provides dhcpclient.
+ * @file icmpclient.c
+ * @provides icmpclient.
  *
  */
 /* Embedded Xinu, Copyright (C) 2008.  All rights reserved. */
 
 #include <xinu.h>
-#include "dhcp.h"
+#include <icmp.h>
 
-enum dhcp_state state = DHCP_INIT;
+enum icmp_state state = ICMP_INIT;
 
 /**
- * DHCP client daemon.
+ * icmp client daemon.
  */
-void dhcpclient(int dev, struct netif *nif)
+void icmpclient(int dev, struct netif *nif)
 {
 	int mesg = 0;
 	int missed  = 0;
@@ -24,13 +24,13 @@ void dhcpclient(int dev, struct netif *nif)
 	{
 		switch (state)
 		{
-		case DHCP_INIT:
-			// send DHCPDISCOVER
-			sendDiscover(dev);
-			state = DHCP_SELECTING;
+		case ICMP_INIT:
+			// send icmpDISCOVER
+			echoRequest(dev);
+			state = icmp_SELECTING;
 			break;
 
-		case DHCP_SELECTING:
+		case icmp_SELECTING:
 			// Read an offer
 			mesg = recvtime(SELECT_WAIT * (missed + 1));
 			if (TIMEOUT == mesg)
@@ -40,64 +40,64 @@ void dhcpclient(int dev, struct netif *nif)
 				break;
 			}
 			// Select an offer
-			// send DHCPREQUEST
+			// send icmpREQUEST
 			packet = (uchar *)mesg;
 			if(recvOffer(dev, nif, packet))
 			{
-				state = DHCP_REQUESTING;
+				state = icmp_REQUESTING;
 			}
 			buffree(packet);
 			break;
 
-		case DHCP_REQUESTING:
+		case icmp_REQUESTING:
 			// Read a NACK or an ACK
 			if (1)
 			{
-				state = DHCP_BOUND;
+				state = icmp_BOUND;
 				// set a timer
 				sleep(10000);
 			}
 			// NACK
-			state = DHCP_INIT;
+			state = icmp_INIT;
 			continue;
 			break;
 
-		case DHCP_BOUND:
+		case icmp_BOUND:
 			// Timer expired
-			// send DHCPREQUEST
-			state = DHCP_RENEWING;
+			// send icmpREQUEST
+			state = icmp_RENEWING;
 			// sleep for a while
 			break;
 
-		case DHCP_RENEWING:
-			// Send DHCPREQUEST
+		case icmp_RENEWING:
+			// Send icmpREQUEST
 			// If ACK
 			if (1)
 			{
-				state = DHCP_BOUND;
+				state = icmp_BOUND;
 				// set a timer
 				continue;
 			}
 			// If NACK
 			if (0)
 			{
-				state = DHCP_INIT;
+				state = icmp_INIT;
 				continue;
 			}
 			// If 75% expired
-			state = DHCP_REBINDING;
+			state = icmp_REBINDING;
 			break;
 
-		case DHCP_REBINDING:
+		case icmp_REBINDING:
 			// If ACK
 			if (1)
 			{
-				state = DHCP_BOUND;
+				state = icmp_BOUND;
 				// set a timer
 				continue;
 			}
 			// If expired
-			state = DHCP_INIT;
+			state = icmp_INIT;
 			break;
 
 		default:
