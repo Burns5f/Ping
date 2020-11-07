@@ -21,3 +21,5 @@ int echoRequest(int dev, uchar *ipaddr);
 int echoReply(int dev, uchar *buf);
 
 int echoResolve(uchar *ipaddr);
+
+void echoReceive(int dev, uchar *packet);

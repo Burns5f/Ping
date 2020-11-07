@@ -6,7 +6,6 @@
 #include <xinu.h>
 #include "icmp.h"
 #include <stdlib.h>
-//#include <network.h>
 #include "../arp/arp.h"
 	/** 
  * Generate a Echo request.
@@ -22,7 +21,7 @@ int echoRequest(int dev, uchar *ipaddr)
 	int i;
 
 	// Construct an echo request.
-	arpresolve(ipaddr,ether->dst); //Obtain Mac address using arpresolve
+	arpResolve(ipaddr,ether->dst); //Obtain Mac address using arpresolve
 	getmac(dev, ether->src);
 	ether->type = htons(ETYPE_IPv4);
 
@@ -36,7 +35,7 @@ int echoRequest(int dev, uchar *ipaddr)
 	dgram->chksum = 0;
 
 	getip(dev, dgram->src);
-	dgram->dst = ipaddr;
+	memcpy(dgram->dst, ipaddr, IP_ADDR_LEN);
 	//getip and then the ip address passed in. 
 	icmp->type = ECHO;
 	icmp->code  = 0;
@@ -58,9 +57,11 @@ int echoRequest(int dev, uchar *ipaddr)
 							 (4 * (dgram->ver_ihl & IPv4_IHL)));
 	icmp->checksum  = checksum((uchar*)icmp, sizeof(struct icmpgram) + ICMP_PAYLOAD_LENGTH); //8 size of struct + 18 payload size to fill out buffer
 
-	
+	printf("%s\n\n", dgram->src);
+
+	printf("About to send the packet");
 	write(dev, (uchar *)buffer, 
-		  sizeof(struct ethergram) + sizeof(struct ipgram) + sizeof(struct icmpgram));
+		  PKTSZ);
 
 	// sleep(1000);
 
@@ -87,6 +88,7 @@ int echoRequest(int dev, uchar *ipaddr)
 
 int echoResolve(uchar *ipaddr)
 {
+		//need to save process id
 		ready(create
           ((void *)echoRequest, INITSTK, 
 		   proctab[currpid].priority + 1, 

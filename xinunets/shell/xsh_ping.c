@@ -18,7 +18,7 @@ command xsh_ping(int nargs, char *args[])
 {
     uchar ipaddr[IP_ADDR_LEN];
 
-    if (nargs > 1)
+    if (nargs > 2)
     {
         fprintf(stderr, "ping: too many arguments\n");
         fprintf(stderr, "Try 'kill --help' for more information\n");

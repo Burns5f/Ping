@@ -1,6 +1,6 @@
 
 #include <xinu.h>
-#include <icmp.h>
+#include "icmp.h"
  
 /**
  * Swap and return icmp echo.
@@ -34,13 +34,13 @@ int echoReply(int dev, uchar *buf)
 		memcpy(ether->dst, ether->src, ETH_ADDR_LEN);
 		memcpy(ether->src, enet, ETH_ADDR_LEN);
 
-        icmp->code = htons(ECHOREPLY);
+        icmp->code = ECHOREPLY; //do we need htons()
 
         memcpy(dgram->dst, dgram->src, IP_ADDR_LEN);
         memcpy(dgram->src, ip, IP_ADDR_LEN);
 
 		write(dev, (uchar *)buf, 
-		  sizeof(struct ethergram) + sizeof(struct ipgram) + sizeof(struct icmpgram));
+		  PKTSZ);
     }
     else
     {

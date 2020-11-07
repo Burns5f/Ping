@@ -71,10 +71,11 @@ void netDaemon(int dev, struct netif *nif)
 			{
 				send(dhcpd, (ulong)packet);
 			}
-			break;
+			break; 
 			if (IPv4_PROTO_ICMP == dgram->proto)
 			{
-				echoReply(ETH0, (ulong)packet);//Not sure if this works 
+				printf("ICMP packet received");
+				echoReceive(ETH0, (ulong)packet);//Not sure if this works
 			}
 			break;
 		default:
