@@ -1,7 +1,7 @@
 
 #include <xinu.h>
 #include "icmp.h"
- 
+  
 /**
  * Swap and return icmp echo.
  *

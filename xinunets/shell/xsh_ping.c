@@ -30,7 +30,6 @@ command xsh_ping(int nargs, char *args[])
 		fprintf(stderr, "Could not parse IP address \"%s\"\n", args[1]);
 		return 1;
 	}
-
     if (OK != echoResolve(ipaddr))
 	{
 		fprintf(stdout, "Could not resolve %s\n", args[1]);

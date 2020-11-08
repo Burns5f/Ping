@@ -19,7 +19,6 @@ int echoRequest(int dev, uchar *ipaddr)
 	struct ipgram *dgram = (struct ipgram*)ether->data; 
 	struct icmpgram   *icmp = (struct icmpgram *)dgram->opts;
 	int i;
-
 	// Construct an echo request.
 	arpResolve(ipaddr,ether->dst); //Obtain Mac address using arpresolve
 	getmac(dev, ether->src);
@@ -35,7 +34,7 @@ int echoRequest(int dev, uchar *ipaddr)
 	dgram->chksum = 0;
 
 	getip(dev, dgram->src);
-	memcpy(dgram->dst, ipaddr, IP_ADDR_LEN);
+	memcpy(dgram->dst, ipaddr, IPv4_ADDR_LEN);
 	//getip and then the ip address passed in. 
 	icmp->type = ECHO;
 	icmp->code  = 0;
@@ -43,12 +42,8 @@ int echoRequest(int dev, uchar *ipaddr)
 	icmp->identifier  = 0; //need fixing 
 	icmp->seqnum = 0; //need fixing 
 	//icmp->data = 0; array size 18 to fill rest of space in buffer
-	//getmac(dev, arp->sha);
-	//getip(dev, arp->spa);
-    //bzero(arp->tha, ETH_ADDR_LEN);
-    //memcpy(arp->tpa, ipaddr, IP_ADDR_LEN);
-
-	//fill in data portion with data
+ 
+	//fill in data portion with dummy data
 	for (i = 0; i++; i < ICMP_PAYLOAD_LENGTH)
 	{
 		icmp->data[i] = '0';
@@ -56,10 +51,7 @@ int echoRequest(int dev, uchar *ipaddr)
 	dgram->chksum = checksum((uchar *)dgram, 
 							 (4 * (dgram->ver_ihl & IPv4_IHL)));
 	icmp->checksum  = checksum((uchar*)icmp, sizeof(struct icmpgram) + ICMP_PAYLOAD_LENGTH); //8 size of struct + 18 payload size to fill out buffer
-
-	printf("%s\n\n", dgram->src);
-
-	printf("About to send the packet");
+		
 	write(dev, (uchar *)buffer, 
 		  PKTSZ);
 

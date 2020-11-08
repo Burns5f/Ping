@@ -2,7 +2,7 @@
 
 #include <xinu.h>
 #include "arp.h"
-
+ 
 /*------------------------------------------------------------------------
  * arpReceive - Demultiplex incoming ARP packets
  *------------------------------------------------------------------------
@@ -12,7 +12,7 @@ void arpReceive(int dev, uchar *packet)
 	struct ethergram *ether = (struct ethergram *)packet;
 	struct arpgram   *arp   = (struct arpgram *)ether->data;
 	int i;
-	
+	 
 	switch (ntohs(arp->oper))
 	{
 	case ARP_REQUEST:

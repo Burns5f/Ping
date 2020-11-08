@@ -3,7 +3,7 @@
  * @provides arpResolve
  */
 /* Embedded Xinu, Copyright (C) 2008.  All rights reserved. */
- 
+  
 #include <xinu.h>
 #include "arp.h"
 
@@ -62,7 +62,6 @@ process arpRequest(int dev, int arpindex, uchar *ipaddr)
 	struct ethergram *ether = (struct ethergram *)buffer;
 	struct arpgram   *arp   = (struct arpgram *)ether->data;
 	int i;
-
 	// Construct an ARP request.
 	for (i = 0; i < ETH_ADDR_LEN; i++)
 	{ ether->dst[i] = 0xFF; }

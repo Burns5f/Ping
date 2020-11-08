@@ -4,7 +4,7 @@
 #include "../network/arp/arp.h"
 
 #define MAXBUF 1500
-
+ 
 /**
  * Displays an ARP table line.
  * @return OK.
@@ -13,7 +13,7 @@ local arpLine(struct arpentry *arpptr)
 {
 	char workstr[20];
 	int j;
-
+ 
 	for (j = 0; j < ETH_ADDR_LEN; j++)
 	{
 		printf("%02X", arpptr->mac[j]);
@@ -88,7 +88,7 @@ command xsh_arp(int nargs, char *args[])
 	uchar ipaddr[IP_ADDR_LEN];
 	uchar macaddr[ETH_ADDR_LEN];
 	int i;
-
+ 
 	/* Output help, if '--help' argument was supplied */
     if (nargs == 2 && strncmp(args[1], "--help", 6) == 0)
     {
@@ -111,7 +111,7 @@ command xsh_arp(int nargs, char *args[])
         fprintf(stderr, "Try 'kill --help' for more information\n");
         return 1;
     }
-
+ 
 	if (OK != dot2ip(args[1], ipaddr))
 	{
 		fprintf(stderr, "Could not parse IP address \"%s\"\n", args[1]);
